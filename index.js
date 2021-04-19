@@ -29,7 +29,8 @@ client.connect(err => {
   const bookCollection = client.db("bServicedb").collection("books");
   const reviewCollection = client.db("bServicedb").collection("reviews");
   const adminCollection = client.db("bServicedb").collection("admins");
-
+  const appointmentCollection = client.db("bServicedb").collection("appointments");
+  appointmentCollection
   app.get('/services', (req, res) => {
     serviceCollection.find()
     .toArray((err, items) => {
@@ -45,6 +46,9 @@ serviceCollection.find({_id: ObjectId(req.params.id)})
     res.send(documents[0]);
 })
 })
+
+
+
 
   
   
@@ -73,6 +77,34 @@ serviceCollection.find({_id: ObjectId(req.params.id)})
     })
 
 
+    app.get('/books', (req, res) => {
+      bookCollection.find({})
+      .toArray((err, items) => {
+          res.send(items)
+      })
+  })
+
+
+
+    app.get('/books/:email', (req, res) => {
+      //console.log(req.query.email);
+      bookCollection.find({email: req.params.email })
+  
+      //bookCollection.find({email: req.query.email})
+  .toArray((err,documents) =>{
+          console.log(documents);
+          res.send(documents);
+          
+         })
+  
+    })
+
+
+
+
+
+
+
     app.post('/addReview' , (req, res) => {
       const newReview = req.body;
       console.log(newReview);
@@ -82,6 +114,29 @@ serviceCollection.find({_id: ObjectId(req.params.id)})
            res.send(result.insertedCount >0)
       })
       })
+
+    
+
+      app.post('/requestAppointment' , (req, res) => {
+        const newAppointment = req.body;
+        console.log(newAppointment);
+        appointmentCollection.insertOne(newAppointment) 
+        .then(result => {
+             //console.log('inserted count:', result)
+             res.send(result.insertedCount >0)
+        })
+        })
+
+
+        app.get('/appointment', (req, res) => {
+          appointmentCollection.find()
+          .toArray((err, items) => {
+              res.send(items)
+          })
+      })
+
+
+
 
 
       app.get('/reviews', (req, res) => {
@@ -102,7 +157,21 @@ serviceCollection.find({_id: ObjectId(req.params.id)})
               res.send(result.insertedCount >0)
          })
          })
+
+
+         app.post('/isAdmin', (req, res) => {
+          const email = req.body.email;
+          adminCollection.find({ email: email })
+              .toArray((err, admins) => {
+                  res.send(admins.length > 0);
+              })
+      })
+         
   
+
+
+
+
 
 
     app.delete('/deleteService/:id', (req,res) =>{
