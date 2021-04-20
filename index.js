@@ -88,8 +88,9 @@ serviceCollection.find({_id: ObjectId(req.params.id)})
 
     app.get('/books/:email', (req, res) => {
       //console.log(req.query.email);
-      bookCollection.find({email: req.params.email })
-  
+      bookCollection.find({UserEmail: req.params.email})
+      
+      // orderCollection.find({"email": req.params.email})
       //bookCollection.find({email: req.query.email})
   .toArray((err,documents) =>{
           console.log(documents);
